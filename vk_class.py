@@ -5,6 +5,7 @@ from pprint import pprint
 class FriendsVK:
 
     def __init__(self, token, user_id):
+        super().__init__()
         self.user_id = user_id
         self.token = token
 
@@ -24,41 +25,72 @@ class FriendsVK:
 
         return response.json()
 
-def transform(json_data):
-    friends_dict = set()
-    for i in range(len(json_data['response']['items'])):
-        str = json_data['response']['items'][i]
-        friends_dict.add(str)
-        # print (str)
-    #print(friends_dict)
-    return friends_dict
+    def transform(self, json_data):
+        friends_dict = set()
+        for i in range(len(json_data['response']['items'])):
+            str = json_data['response']['items'][i]
+            friends_dict.add(str)
+            # print (str)
+        # print(friends_dict)
+        return friends_dict
 
-def url_friends(friends):
-    list_friends = friends
+    def url_friends(self,friends):
+        list_friends = friends
+        result_url_profile = []
+        for i in list_friends:
+            friends_URL = 'https://vk.com/id' + str(i)
+            result_url_profile.append(friends_URL)
+            #print(result_url_profile)
+        return result_url_profile
 
-    for i in list_friends:
-        friends_URL = 'https://vk.com/id' + str(i)
-        print(friends_URL )
+    def __str__(self):
+        return 'https://vk.com/id{id}'.format(id=self.user_id)
+
+    def __and__(self, other):
+        self_dict = self.transform(self.friends_user(self.token, self.user_id))
+
+        other_dict = other.transform(other.friends_user(other.token, other.user_id))
+
+
+        #print (self_dict)
+        #print(other_dict)
+
+        #common_friends = set(self_dict.keys()) & set(other_dict.keys())
+        common_friends = set(self_dict & other_dict)
+        #print ('common_friends {}'.format(common_friends))
+
+        # friends = []
+        # friends = common_friends
+        #print (common_friends)
+
+        list_vk = self.url_friends(common_friends)
+
+        #print (list_vk)
+
+        return list_vk
+
+###END OF CLASS
+
 
 
 
 
 if __name__ == '__main__':
-    TOKEN = '7e356f4d12943a9620e4136bcdfadaa3378957b36630f887600f253dd7946e429a9d297677dfa67002c74'
+    TOKEN = '59a3a8e788f9aa9d76f4a9b5f0e854373672f86b0af3d01df94762ed97125df74e095211c9c4cab6f2c86'
 
     USER_ID = '926104'
     user1 = FriendsVK(TOKEN, USER_ID)
-    friends1 = transform(user1.friends_user(TOKEN, USER_ID))
-    pprint(friends1)
+
 
 
     USER_ID = '525932455'
     user2 = FriendsVK(TOKEN, USER_ID)
-    friends2 = transform(user2.friends_user(TOKEN, USER_ID))
-    pprint(friends2)
 
-    tot= friends1 & friends2
-    url_friends(tot)
-    print (tot)
+    print ('Общие друзья')
+    print (user1.__and__(user2))
 
-    
+    print ("Пользователь")
+    print (user2.__str__())
+
+    print("Пользователь")
+    print(user1.__str__())
