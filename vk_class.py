@@ -90,7 +90,7 @@ if __name__ == '__main__':
     print (user1.__and__(user2))
 
     print ("Пользователь")
-    print (user2.__str__())
+    print (user2)
 
     print("Пользователь")
-    print(user1.__str__())
+    print(user1)
